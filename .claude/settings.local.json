@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go get:*)",
+      "Bash(curl:*)",
+      "Bash(go build:*)",
+      "Bash(./netspeed.exe:*)",
+      "Bash(./netspeed-v2.exe)",
+      "Bash(./netspeed-v2.exe:*)",
+      "Bash(go test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,28 @@
+# 编译产物
+netspeed
+netspeed.exe
+*.exe
+bin/
+dist/
+
+# Go 相关
+*.o
+*.a
+*.so
+*.test
+
+# 配置文件（保留示例文件）
+sites.json
+!sites.example.json
+
+# IDE 相关
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 临时文件
+*.log
+*.tmp
