@@ -1,6 +1,6 @@
 # NetSpeed - 跨平台网络质量检测工具
 
-🚀 基于 Go 语言开发的命令行网络质量检测工具，支持 Linux、macOS 和 Windows。
+🚀 基于 Go 语言开发的跨平台网络质量检测工具，支持 Linux、macOS 和 Windows。
 
 ## 功能特性
 
@@ -17,15 +17,25 @@
 
 ## 安装
 
+### 使用 go install 安装（推荐）
+
+```bash
+# 直接安装最新版本
+go install github.com/icarus-go/netspeed/cmd/netspeed@latest
+
+# 安装后，netspeed 将位于 $GOPATH/bin 或 $GOBIN 路径下
+# 确保该路径已添加到系统 PATH 环境变量中
+```
+
 ### 从源码编译
 
 ```bash
 # 克隆项目
-git clone https://github.com/icarus-go/net-speed.git
-cd net-speed
+git clone https://github.com/icarus-go/netspeed.git
+cd netspeed
 
 # 编译
-go build -o netspeed
+go build -o netspeed ./cmd/netspeed
 
 # Linux/macOS
 chmod +x netspeed
@@ -39,16 +49,16 @@ sudo mv netspeed /usr/local/bin/
 
 ```bash
 # Linux AMD64
-GOOS=linux GOARCH=amd64 go build -o netspeed-linux-amd64
+GOOS=linux GOARCH=amd64 go build -o netspeed-linux-amd64 ./cmd/netspeed
 
 # macOS AMD64
-GOOS=darwin GOARCH=amd64 go build -o netspeed-darwin-amd64
+GOOS=darwin GOARCH=amd64 go build -o netspeed-darwin-amd64 ./cmd/netspeed
 
 # macOS ARM64 (M1/M2)
-GOOS=darwin GOARCH=arm64 go build -o netspeed-darwin-arm64
+GOOS=darwin GOARCH=arm64 go build -o netspeed-darwin-arm64 ./cmd/netspeed
 
 # Windows AMD64
-GOOS=windows GOARCH=amd64 go build -o netspeed-windows-amd64.exe
+GOOS=windows GOARCH=amd64 go build -o netspeed-windows-amd64.exe ./cmd/netspeed
 ```
 
 ## 使用方法
@@ -62,13 +72,13 @@ netspeed -help
 # 测试网站速度
 netspeed -test
 
-# 获取 IP 信息（使用代理时显示代理 IP）
+# 获取 IP 信息（显示当前网络出口 IP）
 netspeed -ip
 
-# ⭐ 获取原始 IP（绕过代理）
+# ⭐ 获取原始 IP（绕过代理，检测真实网络出口）
 netspeed -ip -origin
 
-# ⭐ 新功能: 检测 IP 纯净度
+# ⭐ 检测 IP 纯净度
 netspeed -purity
 ```
 
@@ -125,7 +135,7 @@ netspeed -test -proxy socks5://127.0.0.1:1080 -watch 60
 #### 网站测试输出
 
 ```
-🚀 开始测试 12 个网站...
+🚀 开始测试网站...
 
 ┌─────────────────┬──────────────┬────────────────────────────┬──────────┐
 │ 网站              │ 延迟           │ URL                        │ 状态       │
@@ -135,6 +145,8 @@ netspeed -test -proxy socks5://127.0.0.1:1080 -watch 60
 │ ✓ YouTube       │    156 ms    │ https://www.youtube.com    │ ✓ 优秀     │
 │ ⚠ Twitter       │    523 ms    │ https://twitter.com        │ ⚠ 一般     │
 │ ✗ Facebook      │    Timeout   │ https://www.facebook.com   │ ✗ 超时     │
+│ ✓ Netflix       │    234 ms    │ https://www.netflix.com    │ ✓ 良好     │
+│ ⚠ Instagram     │    612 ms    │ https://www.instagram.com  │ ⚠ 一般     │
 └─────────────────┴──────────────┴────────────────────────────┴──────────┘
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -319,26 +331,37 @@ unset http_proxy https_proxy all_proxy
 
 使用以下 API（按优先级，支持故障转移）：
 
-1. ipapi.co
-2. ipinfo.io
-3. ip-api.com
+1. ping0.cc (快速响应，国内友好)
+2. ipapi.co
+3. ipinfo.io
+4. ip-api.com
 
 ## 项目结构
 
 ```
-net-speed/
-├── main.go                  # 主程序
-├── go.mod                   # Go 模块定义
-├── go.sum                   # 依赖校验和
-├── sites.example.json       # 示例配置文件
-├── README.md                # 项目文档
-└── netspeed.exe            # 编译后的可执行文件（Windows）
+netspeed/
+├── cmd/netspeed/
+│   └── main.go             # 主程序入口
+├── pkg/
+│   ├── command/            # 命令注册与执行
+│   ├── commands/           # 具体命令实现
+│   ├── config/             # 配置管理
+│   ├── ipinfo/             # IP 信息检测
+│   ├── output/             # 输出格式化
+│   ├── proxy/              # 代理支持
+│   └── tester/             # 网站测试
+├── sites.example.json      # 示例配置文件
+├── Makefile                # 构建脚本
+├── go.mod                  # Go 模块定义
+├── go.sum                  # 依赖校验和
+├── README.md               # 项目文档
+└── bin/                    # 编译后的可执行文件
+    ├── netspeed-darwin-arm64
+    ├── netspeed-darwin-amd64
+    ├── netspeed-linux-amd64
+    ├── netspeed-linux-arm64
+    └── netspeed-windows-amd64.exe
 ```
-
-## 依赖
-
-- Go 1.21+
-- golang.org/x/net/proxy (SOCKS5 支持)
 
 ## 常见问题
 
