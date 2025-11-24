@@ -62,8 +62,11 @@ netspeed -help
 # 测试网站速度
 netspeed -test
 
-# 获取 IP 信息
+# 获取 IP 信息（使用代理时显示代理 IP）
 netspeed -ip
+
+# ⭐ 获取原始 IP（绕过代理）
+netspeed -ip -origin
 
 # ⭐ 新功能: 检测 IP 纯净度
 netspeed -purity
@@ -78,6 +81,12 @@ netspeed -test -proxy socks5://127.0.0.1:1080
 # 使用代理测试（HTTP）
 netspeed -test -proxy http://proxy.example.com:8080
 
+# 使用环境变量设置代理（推荐）
+export http_proxy=http://proxy.example.com:8080
+export https_proxy=http://proxy.example.com:8080
+netspeed -test
+netspeed -ip
+
 # 持续监控模式（每 30 秒刷新）
 netspeed -test -watch 30
 
@@ -90,6 +99,26 @@ netspeed -test -timeout 5
 # 组合使用
 netspeed -test -proxy socks5://127.0.0.1:1080 -watch 60
 ```
+
+### 代理配置说明
+
+支持两种代理配置方式：
+
+1. **通过参数设置**（优先级高）
+   ```bash
+   netspeed -test -proxy http://proxy.example.com:8080
+   ```
+
+2. **通过环境变量设置**（推荐方式，与其他工具保持一致）
+   ```bash
+   export http_proxy=http://proxy.example.com:8080
+   export https_proxy=http://proxy.example.com:8080
+   # 所有命令都会自动使用代理
+   netspeed -test
+   netspeed -ip
+   ```
+
+支持的代理协议：HTTP、HTTPS、SOCKS5
 
 ### 输出示例
 
@@ -230,18 +259,44 @@ netspeed -test
 ### 企业代理环境
 
 ```bash
-# 使用公司 HTTP 代理
+# 方法 1: 使用参数指定代理（一次性）
 netspeed -test -proxy http://proxy.company.com:8080
-
-# 使用 SOCKS5 代理
 netspeed -test -proxy socks5://proxy.company.com:1080
+
+# 方法 2: 使用环境变量（推荐，持久化）
+export http_proxy=http://proxy.company.com:8080
+export https_proxy=http://proxy.company.com:8080
+netspeed -test
+netspeed -ip
+
+# 对比代理 IP 和原始 IP
+netspeed -ip           # 显示代理 IP
+netspeed -ip -origin   # 显示原始 IP（绕过代理）
 ```
 
 ### 持续监控代理连接
 
 ```bash
-# 每分钟检测一次代理连接质量
+# 方法 1: 使用参数指定代理
 netspeed -test -proxy socks5://127.0.0.1:1080 -watch 60
+
+# 方法 2: 使用环境变量
+export all_proxy=socks5://127.0.0.1:1080
+netspeed -test -watch 60
+```
+
+### 环境变量配置参考
+
+```bash
+# HTTP/HTTPS 代理
+export http_proxy=http://proxy.example.com:8080
+export https_proxy=http://proxy.example.com:8080
+
+# SOCKS5 代理
+export all_proxy=socks5://127.0.0.1:1080
+
+# 取消代理设置
+unset http_proxy https_proxy all_proxy
 ```
 
 ## 技术实现

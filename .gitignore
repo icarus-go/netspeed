@@ -16,6 +16,7 @@ sites.json
 !sites.example.json
 
 # IDE 相关
+.claude/
 .idea/
 .vscode/
 *.swp
