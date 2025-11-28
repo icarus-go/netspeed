@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"golang.org/x/net/proxy"
@@ -18,8 +19,7 @@ func InitHTTPClient(proxyURL string, timeout time.Duration) (*http.Client, error
 		IdleConnTimeout:     30 * time.Second,
 	}
 
-	// 如果没有通过参数设置代理，则让 Go 的 http 库自动从环境变量读取代理
-	// 当 transport.Proxy 为 nil 时，Go 会自动检查环境变量 HTTP_PROXY, HTTPS_PROXY, ALL_PROXY
+	// 检查是否通过参数设置了代理
 	if proxyURL != "" {
 		// 解析代理 URL
 		parsedURL, err := url.Parse(proxyURL)
@@ -45,10 +45,38 @@ func InitHTTPClient(proxyURL string, timeout time.Duration) (*http.Client, error
 		default:
 			return nil, fmt.Errorf("不支持的代理协议: %s (支持 http, https, socks5)", parsedURL.Scheme)
 		}
+	} else {
+		// 检查环境变量代理设置
+		httpProxy := getEnvProxy("HTTP_PROXY", "http_proxy")
+		httpsProxy := getEnvProxy("HTTPS_PROXY", "https_proxy")
+		allProxy := getEnvProxy("ALL_PROXY", "all_proxy")
+
+		if httpProxy != "" || httpsProxy != "" || allProxy != "" {
+			// 使用环境变量代理，让 Go 的 http 库自动读取
+			// transport.Proxy 为 nil 时，Go 会自动检查环境变量 HTTP_PROXY, HTTPS_PROXY, ALL_PROXY
+			fmt.Println("✓ 已自动检测到环境变量代理配置:")
+			if httpProxy != "" {
+				fmt.Printf("  - HTTP_PROXY: %s\n", httpProxy)
+			}
+			if httpsProxy != "" {
+				fmt.Printf("  - HTTPS_PROXY: %s\n", httpsProxy)
+			}
+			if allProxy != "" {
+				fmt.Printf("  - ALL_PROXY: %s\n", allProxy)
+			}
+		}
 	}
 
 	return &http.Client{
 		Transport: transport,
 		Timeout:   timeout,
 	}, nil
+}
+
+// getEnvProxy 获取环境变量代理，优先检查大写，再检查小写
+func getEnvProxy(upper, lower string) string {
+	if val := os.Getenv(upper); val != "" {
+		return val
+	}
+	return os.Getenv(lower)
 }
