@@ -1,4 +1,4 @@
-module github.com/icarus-go/net-speed
+module github.com/icarus-go/netspeed
 
 go 1.25.1
 
