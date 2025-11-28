@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/icarus-go/net-speed/pkg/tester"
+	"github.com/icarus-go/netspeed/pkg/tester"
 )
 
 // PrintResultsTable 以表格形式输出结果

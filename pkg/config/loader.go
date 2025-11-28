@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/icarus-go/net-speed/pkg/tester"
+	"github.com/icarus-go/netspeed/pkg/tester"
 )
 
 // Loader 配置加载器

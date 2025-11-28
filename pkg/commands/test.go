@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/icarus-go/net-speed/pkg/command"
-	"github.com/icarus-go/net-speed/pkg/config"
-	"github.com/icarus-go/net-speed/pkg/output"
-	"github.com/icarus-go/net-speed/pkg/tester"
+	"github.com/icarus-go/netspeed/pkg/command"
+	"github.com/icarus-go/netspeed/pkg/config"
+	"github.com/icarus-go/netspeed/pkg/output"
+	"github.com/icarus-go/netspeed/pkg/tester"
 )
 
 // TestCommand 网站测试命令

@@ -3,7 +3,7 @@ package commands
 import (
 	"flag"
 
-	"github.com/icarus-go/net-speed/pkg/command"
+	"github.com/icarus-go/netspeed/pkg/command"
 )
 
 // HelpCommand 帮助命令

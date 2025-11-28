@@ -1,5 +1,48 @@
 # NetSpeed 更新日志
 
+## v1.0.3 - 修复导入路径问题 (2025-11-28)
+
+### 🐛 Bug 修复
+
+**修复模块导入路径不一致问题**
+- 统一所有导入路径从 `github.com/icarus-go/net-speed` 修改为 `github.com/icarus-go/netspeed`
+- 解决了 `go install` 和 `go build` 失败的问题
+- 确保项目能够通过 `go install github.com/icarus-go/netspeed/cmd/netspeed@latest` 正确安装
+
+### 📦 影响的文件
+
+修复了以下 8 个文件的导入路径：
+- `cmd/netspeed/main.go`
+- `pkg/commands/ip.go`
+- `pkg/commands/purity.go`
+- `pkg/commands/test.go`
+- `pkg/commands/watch.go`
+- `pkg/commands/help.go`
+- `pkg/config/loader.go`
+- `pkg/output/table.go`
+
+### ✅ 测试验证
+
+- ✅ 所有单元测试通过
+- ✅ 跨平台编译成功（Linux, macOS, Windows）
+- ✅ 模块路径与 go.mod 保持一致
+
+### 📝 安装方式
+
+现在可以通过以下方式安装：
+
+```bash
+# 使用 go install（推荐）
+go install github.com/icarus-go/netspeed/cmd/netspeed@latest
+
+# 或从源码编译
+git clone https://github.com/icarus-go/netspeed.git
+cd netspeed
+go build -o netspeed ./cmd/netspeed
+```
+
+---
+
 ## v2.0.0 - 架构重构与功能增强 (2025-11-19)
 
 ### 🎯 重大更新

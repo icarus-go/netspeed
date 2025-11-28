@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/icarus-go/net-speed/pkg/command"
-	"github.com/icarus-go/net-speed/pkg/ipinfo"
+	"github.com/icarus-go/netspeed/pkg/command"
+	"github.com/icarus-go/netspeed/pkg/ipinfo"
 )
 
 // IPScoreCommand IP 纯净度检测命令

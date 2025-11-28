@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/icarus-go/net-speed/pkg/command"
-	"github.com/icarus-go/net-speed/pkg/commands"
-	"github.com/icarus-go/net-speed/pkg/proxy"
+	"github.com/icarus-go/netspeed/pkg/command"
+	"github.com/icarus-go/netspeed/pkg/commands"
+	"github.com/icarus-go/netspeed/pkg/proxy"
 )
 
 func main() {
