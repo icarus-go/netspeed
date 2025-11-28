@@ -149,3 +149,190 @@ func TestParseLocationLine(t *testing.T) {
 		})
 	}
 }
+
+// TestParseJSONFormat 测试 JSON 格式解析
+func TestParseJSONFormat(t *testing.T) {
+	detector := &Detector{}
+
+	tests := []struct {
+		name      string
+		jsonInput string
+		wantErr   bool
+		expected  IPInfo
+	}{
+		{
+			name: "完整 JSON",
+			jsonInput: `{
+				"ip": "203.0.113.45",
+				"country": "United States",
+				"countryCode": "US",
+				"region": "California",
+				"city": "Los Angeles",
+				"isp": "AT&T Services",
+				"timezone": "America/Los_Angeles",
+				"org": "AS7018 AT&T Services Inc."
+			}`,
+			wantErr: false,
+			expected: IPInfo{
+				IP:          "203.0.113.45",
+				Country:     "United States",
+				CountryCode: "US",
+				Region:      "California",
+				City:        "Los Angeles",
+				ISP:         "AT&T Services",
+				Timezone:    "America/Los_Angeles",
+				Org:         "AS7018 AT&T Services Inc.",
+			},
+		},
+		{
+			name: "部分字段 JSON",
+			jsonInput: `{
+				"ip": "1.2.3.4",
+				"country": "China",
+				"city": "Beijing"
+			}`,
+			wantErr: false,
+			expected: IPInfo{
+				IP:      "1.2.3.4",
+				Country: "China",
+				City:    "Beijing",
+			},
+		},
+		{
+			name:      "无效 JSON",
+			jsonInput: `{invalid json`,
+			wantErr:   true,
+		},
+		{
+			name:      "空 JSON",
+			jsonInput: `{}`,
+			wantErr:   false,
+			expected:  IPInfo{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := detector.parseJSONFormat([]byte(tt.jsonInput))
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parseJSONFormat() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if tt.wantErr {
+				return
+			}
+
+			if result.IP != tt.expected.IP {
+				t.Errorf("IP = %s, want %s", result.IP, tt.expected.IP)
+			}
+			if result.Country != tt.expected.Country {
+				t.Errorf("Country = %s, want %s", result.Country, tt.expected.Country)
+			}
+			if result.City != tt.expected.City {
+				t.Errorf("City = %s, want %s", result.City, tt.expected.City)
+			}
+		})
+	}
+}
+
+// TestParseTextFormat_EdgeCases 测试文本格式边界情况
+func TestParseTextFormat_EdgeCases(t *testing.T) {
+	detector := &Detector{}
+
+	tests := []struct {
+		name    string
+		input   string
+		wantErr bool
+	}{
+		{
+			name:    "空输入",
+			input:   "",
+			wantErr: true,
+		},
+		{
+			name:    "仅 IP 地址",
+			input:   "1.2.3.4",
+			wantErr: true, // 行数不足
+		},
+		{
+			name: "包含空行",
+			input: `1.2.3.4
+
+China Beijing
+
+`,
+			wantErr: false,
+		},
+		{
+			name: "超长文本",
+			input: `1.2.3.4
+China Beijing
+AS1234
+Very Long Organization Name With Many Words That Might Cause Issues If Not Handled Properly`,
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := detector.parseTextFormat([]byte(tt.input))
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parseTextFormat() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// TestContainsIgnoreCase 测试大小写不敏感的字符串包含
+func TestContainsIgnoreCase(t *testing.T) {
+	tests := []struct {
+		name   string
+		s      string
+		substr string
+		want   bool
+	}{
+		{"完全匹配", "VPN Service", "VPN", true},
+		{"大小写不同", "vpn service", "VPN", true},
+		{"部分匹配", "ExpressVPN", "VPN", true},
+		{"不匹配", "Residential ISP", "VPN", false},
+		{"空字符串", "", "VPN", false},
+		{"子串为空", "VPN", "", true},
+		{"中文字符", "中国电信", "电信", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := containsIgnoreCase(tt.s, tt.substr)
+			if result != tt.want {
+				t.Errorf("containsIgnoreCase(%q, %q) = %v, want %v", tt.s, tt.substr, result, tt.want)
+			}
+		})
+	}
+}
+
+// TestToLower 测试小写转换
+func TestToLower(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"VPN", "vpn"},
+		{"ExpressVPN", "expressvpn"},
+		{"UPPER", "upper"},
+		{"MiXeD", "mixed"},
+		{"", ""},
+		{"123", "123"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result := toLower(tt.input)
+			if result != tt.want {
+				t.Errorf("toLower(%q) = %q, want %q", tt.input, result, tt.want)
+			}
+		})
+	}
+}
