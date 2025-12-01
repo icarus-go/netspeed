@@ -64,6 +64,7 @@ func InitHTTPClient(proxyURL string, timeout time.Duration) (*http.Client, error
 			if allProxy != "" {
 				fmt.Printf("  - ALL_PROXY: %s\n", allProxy)
 			}
+			transport.Proxy = http.ProxyFromEnvironment
 		}
 	}
 
