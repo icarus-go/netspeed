@@ -1,5 +1,65 @@
 # NetSpeed 更新日志
 
+## v1.0.4 - 增强测试覆盖率和代理配置 (2025-12-01)
+
+### ✨ 新增功能
+
+**大幅提升测试覆盖率**
+- 新增 `pkg/commands/ip_test.go` - 282 行单元测试，覆盖 IP 检测命令
+- 新增 `pkg/ipinfo/detector_http_test.go` - 376 行 HTTP 检测测试
+- 新增 `pkg/ipinfo/score_test.go` - 481 行纯净度评分测试
+- 新增 `pkg/ipinfo/detector_test.go` - 187 行基础检测测试
+- 总计新增 1300+ 行测试代码，显著提升代码质量和可维护性
+
+**优化代理配置**
+- 改进 `HTTP.Transport.Proxy` 默认值，默认读取系统环境变量
+- 简化代理配置逻辑，自动感知系统代理设置
+- 确保在没有显式代理配置时也能正确使用环境变量
+
+### 📊 测试统计
+
+- ✅ 新增 4 个测试文件，总计 1300+ 行测试代码
+- ✅ 覆盖 IP 检测、纯净度评分、HTTP 请求等核心功能
+- ✅ 所有单元测试通过
+- ✅ 继续支持跨平台构建（Linux, macOS, Windows）
+
+### 📝 验证方式
+
+测试通过以下命令运行：
+
+```bash
+# 运行所有测试
+go test ./...
+
+# 查看测试覆盖率
+go test -cover ./...
+
+# 测试特定模块
+go test ./pkg/ipinfo
+go test ./pkg/commands
+```
+
+### 🚀 安装方式
+
+```bash
+# 重新编译以获得最佳性能
+go build -o netspeed ./cmd/netspeed
+
+# 或使用 go install
+go install github.com/icarus-go/netspeed/cmd/netspeed@latest
+```
+
+### 📦 变更文件
+
+- `pkg/commands/ip_test.go` - 新增
+- `pkg/ipinfo/detector_http_test.go` - 新增
+- `pkg/ipinfo/score_test.go` - 新增
+- `pkg/ipinfo/detector_test.go` - 新增
+- `pkg/proxy/proxy.go` - 优化代理配置
+- `Makefile` - 更新构建脚本
+
+---
+
 ## v1.0.3 - 修复导入路径问题 (2025-11-28)
 
 ### 🐛 Bug 修复
