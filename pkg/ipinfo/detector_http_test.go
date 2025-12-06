@@ -3,7 +3,6 @@ package ipinfo
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 )
@@ -79,14 +78,6 @@ CHINANET Guangdong province network`,
 				t.Errorf("Country = %s, want %s", result.Country, tt.wantCountry)
 				return
 			}
-
-			httpsProxy := os.Getenv("https_proxy")
-			httpProxy := os.Getenv("http_proxy")
-			allProxy := os.Getenv("all_proxy")
-
-			t.Logf("https_proxy=%s, httpProxy=%s, allProxy=%s", httpsProxy, httpProxy, allProxy)
-
-			t.Logf("ip = %s, want %s", result.IP, tt.wantIP)
 		})
 	}
 }

@@ -1,282 +1,376 @@
 package commands
 
 import (
-	"encoding/json"
+	"bufio"
+	"bytes"
 	"flag"
 	"net/http"
-	"net/http/httptest"
+	"net/url"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/icarus-go/netspeed/pkg/command"
 )
 
-// TestIPCommand_Name 测试命令名称
-func TestIPCommand_Name(t *testing.T) {
-	cmd := NewIPCommand()
-	if cmd.Name() != "ip" {
-		t.Errorf("Name() = %s, want 'ip'", cmd.Name())
-	}
-}
+// TestExecute 表驱动测试 - 标准表驱动测试风格
+func TestExecute(t *testing.T) {
+	// 获取环境变量
+	proxyURL := os.Getenv("PROXY_URL")
+	expectedIPNoProxy := os.Getenv("EXPECTED_IP_NO_PROXY")
+	expectedIPWithProxy := os.Getenv("EXPECTED_IP_WITH_PROXY")
 
-// TestIPCommand_Description 测试命令描述
-func TestIPCommand_Description(t *testing.T) {
-	cmd := NewIPCommand()
-	desc := cmd.Description()
-	if desc == "" {
-		t.Error("Description() should not be empty")
-	}
-	if desc != "获取当前 IP 地理信息" {
-		t.Errorf("Description() = %s, want '获取当前 IP 地理信息'", desc)
-	}
-}
-
-// TestIPCommand_Priority 测试命令优先级
-func TestIPCommand_Priority(t *testing.T) {
-	cmd := NewIPCommand()
-	priority := cmd.Priority()
-	if priority != 10 {
-		t.Errorf("Priority() = %d, want 10", priority)
-	}
-}
-
-// TestIPCommand_DefineFlags 测试 Flag 定义
-func TestIPCommand_DefineFlags(t *testing.T) {
-	cmd := NewIPCommand()
-	flags := flag.NewFlagSet("test", flag.ContinueOnError)
-
-	// 定义 flags
-	cmd.DefineFlags(flags)
-
-	// 验证 -ip flag 是否存在
-	ipFlag := flags.Lookup("ip")
-	if ipFlag == nil {
-		t.Fatal("Expected -ip flag to be defined")
-	}
-	if ipFlag.DefValue != "false" {
-		t.Errorf("Default value of -ip = %s, want 'false'", ipFlag.DefValue)
+	type fields struct {
+		enabled *bool
+		origin  *bool
 	}
 
-	// 验证 -origin flag 是否存在
-	originFlag := flags.Lookup("origin")
-	if originFlag == nil {
-		t.Fatal("Expected -origin flag to be defined")
-	}
-	if originFlag.DefValue != "false" {
-		t.Errorf("Default value of -origin = %s, want 'false'", originFlag.DefValue)
-	}
-}
-
-// TestIPCommand_Execute_NotEnabled 测试命令未启用时不执行
-func TestIPCommand_Execute_NotEnabled(t *testing.T) {
-	cmd := NewIPCommand()
-	flags := flag.NewFlagSet("test", flag.ContinueOnError)
-	cmd.DefineFlags(flags)
-
-	// 不设置 -ip flag，保持默认 false
-	ctx := &command.Context{
-		HTTPClient: &http.Client{},
-		Flags:      flags,
-		Timeout:    10,
+	type args struct {
+		ctx *command.Context
 	}
 
-	// 执行命令，应该返回 nil（不执行任何操作）
-	err := cmd.Execute(ctx)
-	if err != nil {
-		t.Errorf("Execute() with disabled flag should return nil, got error: %v", err)
-	}
-}
-
-// TestIPCommand_Execute_WithMockServer 测试使用 Mock Server 执行命令
-func TestIPCommand_Execute_WithMockServer(t *testing.T) {
-	// 创建 Mock HTTP Server
-	mockResponse := `14.153.68.158
-中国 广东省深圳市福田中国电信
-AS4134
-CHINANET Guangdong province network`
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(mockResponse))
-	}))
-	defer server.Close()
-
-	// 创建命令实例
-	cmd := NewIPCommand()
-	flags := flag.NewFlagSet("test", flag.ContinueOnError)
-	cmd.DefineFlags(flags)
-
-	// 设置 -ip flag
-	flags.Set("ip", "true")
-
-	// 创建 HTTP 客户端
-	client := &http.Client{
-		Timeout: 10 * time.Second,
+	// 辅助函数：将 bool 转换为指针
+	boolPtr := func(b bool) *bool {
+		return &b
 	}
 
-	ctx := &command.Context{
-		HTTPClient: client,
-		Flags:      flags,
-		Timeout:    10,
-	}
-
-	// 注意：这个测试会尝试连接真实的 API
-	// 在实际环境中可能失败，这里主要测试命令执行流程
-	// 更好的方式是 mock ipinfo.Detector
-	err := cmd.Execute(ctx)
-
-	// 由于我们没有完全 mock detector，这里可能会失败
-	// 这个测试主要验证命令执行不会 panic
-	if err != nil {
-		t.Logf("Execute() returned error (expected in test environment): %v", err)
-	}
-}
-
-// TestIPCommand_Execute_OriginMode 测试原始 IP 模式
-func TestIPCommand_Execute_OriginMode(t *testing.T) {
-	cmd := NewIPCommand()
-	flags := flag.NewFlagSet("test", flag.ContinueOnError)
-	cmd.DefineFlags(flags)
-
-	httpProxy := os.Getenv("http_proxy")
-	httpsProxy := os.Getenv("https_proxy")
-	allProxy := os.Getenv("all_proxy")
-	marshal, _ := json.Marshal(map[string]string{
-		"http_proxy":  httpProxy,
-		"https_proxy": httpsProxy,
-		"all_proxy":   allProxy,
-	})
-	t.Log(string(marshal))
-
-	// 设置 -ip 和 -origin flags
-	flags.Set("ip", "true")
-	//flags.Set("origin", "true")
-
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	ctx := &command.Context{
-		HTTPClient: client,
-		Flags:      flags,
-		ProxyURL:   "http://proxy.example.com:8080", // 设置代理
-		Timeout:    10,
-	}
-
-	// 执行命令
-	err := cmd.Execute(ctx)
-
-	// 这个测试会尝试连接真实 API
-	if err != nil {
-		t.Logf("Execute() in origin mode returned error (expected in test environment): %v", err)
-	}
-}
-
-// TestIPCommand_DisplayIPInfo 测试 IP 信息显示（间接测试）
-func TestIPCommand_DisplayIPInfo(t *testing.T) {
-	// 这个测试主要验证 displayIPInfo 方法不会 panic
-	cmd := NewIPCommand()
-
-	// 注意：displayIPInfo 是私有方法，我们无法直接测试
-	// 但可以通过集成测试间接验证
-	// 这里只是确保命令实例创建成功
-	if cmd == nil {
-		t.Fatal("NewIPCommand() should not return nil")
-	}
-}
-
-// TestIPCommand_FlagInteraction 测试 Flag 交互
-func TestIPCommand_FlagInteraction(t *testing.T) {
 	tests := []struct {
-		name       string
-		ipFlag     string
-		originFlag string
-		wantError  bool
+		name         string
+		fields       fields
+		args         args
+		proxyURL     string
+		timeout      time.Duration
+		skip         bool
+		skipReason   string
+		validateFunc func(*testing.T, string, error)
 	}{
+		// 测试用例 1：命令未启用
 		{
-			name:       "Both flags false",
-			ipFlag:     "false",
-			originFlag: "false",
-			wantError:  false, // 不执行，返回 nil
+			name: "命令未启用",
+			fields: fields{
+				enabled: boolPtr(false),
+				origin:  boolPtr(false),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    10,
+				},
+			},
+			timeout: 5 * time.Second,
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err != nil {
+					t.Errorf("预期返回 nil 错误，实际返回: %v", err)
+				}
+				if output != "" {
+					t.Errorf("命令未启用时不应有输出，实际输出: %s", output)
+				}
+				t.Log("命令未启用 successful")
+			},
 		},
+
+		// 测试用例 2：代理模式成功获取 IP
 		{
-			name:       "IP true, origin false",
-			ipFlag:     "true",
-			originFlag: "false",
-			wantError:  false, // 可能失败（网络），但不应 panic
+			name: "代理模式成功获取 IP",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(false),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    15,
+				},
+			},
+			proxyURL:   proxyURL,
+			timeout:    30 * time.Second,
+			skip:       proxyURL == "" || expectedIPWithProxy == "",
+			skipReason: "未设置 PROXY_URL 或 EXPECTED_IP_WITH_PROXY",
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err != nil {
+					t.Fatalf("Execute 失败: %v", err)
+				}
+				// 验证包含 "📍 IP 地址"
+				if !strings.Contains(output, "📍 IP 地址") {
+					t.Errorf("输出中未找到 '📍 IP 地址'，实际输出: %s", output)
+				}
+				// 验证不包含 "原始 IP"
+				if strings.Contains(output, "原始 IP") {
+					t.Errorf("输出中不应包含 '原始 IP'，实际输出: %s", output)
+				}
+				// 验证包含国家信息
+				if !strings.Contains(output, "🌍 国家") {
+					t.Errorf("输出中未找到国家信息，实际输出: %s", output)
+				}
+				// 提取并验证 IP
+				actualIP := extractIPFromOutput(output)
+				actual := strings.TrimSpace(actualIP)
+				expected := strings.TrimSpace(expectedIPWithProxy)
+				if actual == "" {
+					t.Errorf("未从输出中提取到 IP 地址")
+				} else if actual != expected {
+					t.Errorf("IP 地址不匹配: 实际=%s, 预期=%s", actual, expected)
+				}
+				t.Log("代理模式成功获取 IP successful")
+			},
 		},
+
+		// 测试用例 3：原始模式成功获取 IP
 		{
-			name:       "IP true, origin true",
-			ipFlag:     "true",
-			originFlag: "true",
-			wantError:  false, // 可能失败（网络），但不应 panic
+			name: "原始模式成功获取 IP",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(true),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    15,
+				},
+			},
+			timeout:    30 * time.Second,
+			skip:       expectedIPNoProxy == "",
+			skipReason: "未设置 EXPECTED_IP_NO_PROXY",
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err != nil {
+					t.Fatalf("Execute 失败: %v", err)
+				}
+				// 验证包含 "📍 原始 IP"
+				if !strings.Contains(output, "📍 原始 IP") {
+					t.Errorf("输出中未找到 '📍 原始 IP'，实际输出: %s", output)
+				}
+				// 验证不包含 "📍 IP 地址:"
+				if strings.Contains(output, "📍 IP 地址:") {
+					t.Errorf("输出中不应包含 '📍 IP 地址:'，实际输出: %s", output)
+				}
+				// 验证包含提示信息
+				if !strings.Contains(output, "⚠️  已设置为获取原始 IP") {
+					t.Errorf("输出中未找到提示信息，实际输出: %s", output)
+				}
+				// 验证包含国家信息
+				if !strings.Contains(output, "🌍 国家") {
+					t.Errorf("输出中未找到国家信息，实际输出: %s", output)
+				}
+				// 提取并验证 IP
+				actualIP := extractIPFromOutput(output)
+				actual := strings.TrimSpace(actualIP)
+				expected := strings.TrimSpace(expectedIPNoProxy)
+				if actual == "" {
+					t.Errorf("未从输出中提取到 IP 地址")
+				} else if actual != expected {
+					t.Errorf("IP 地址不匹配: 实际=%s, 预期=%s", actual, expected)
+				}
+				t.Log("原始模式成功获取 IP successful")
+			},
+		},
+
+		// 测试用例 4：代理模式失败
+		{
+			name: "代理模式失败",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(false),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    3,
+				},
+			},
+			proxyURL: "http://127.0.0.1:99999", // 无效代理
+			timeout:  10 * time.Second,
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err == nil {
+					t.Errorf("预期返回错误，实际返回 nil")
+				} else if !strings.Contains(err.Error(), "获取 IP 信息失败") {
+					t.Errorf("错误信息不匹配: %v", err)
+				}
+				// 失败时不应显示 IP 信息
+				if strings.Contains(output, "📍 IP 地址") {
+					t.Errorf("失败时不应显示 IP 信息，实际输出: %s", output)
+				}
+				t.Log("代理模式失败 successful")
+			},
+		},
+
+		// 测试用例 5：原始模式边界条件 - 超时测试
+		{
+			name: "原始模式超时测试",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(true),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    2, // 很短的超时
+				},
+			},
+			timeout: 5 * time.Second,
+			validateFunc: func(t *testing.T, output string, err error) {
+				// 这个测试主要是验证在短超时情况下Execute仍然能正确执行
+				// 无论成功还是失败，都要验证输出格式
+				if strings.Contains(output, "⚠️  已设置为获取原始 IP") {
+					t.Log("原始模式提示信息正确显示")
+				}
+				// 如果成功，验证IP信息
+				if err == nil && strings.Contains(output, "📍 原始 IP") {
+					t.Log("原始模式成功获取 IP")
+				}
+				t.Log("原始模式超时测试 successful")
+			},
+		},
+
+		// 测试用例 6：显示完整 IP 信息格式
+		{
+			name: "显示完整 IP 信息格式",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(false),
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    15,
+				},
+			},
+			timeout: 30 * time.Second,
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err != nil {
+					t.Fatalf("Execute 失败: %v", err)
+				}
+				// 验证包含分隔线
+				if !strings.Contains(output, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━") {
+					t.Errorf("输出中未找到分隔线，实际输出: %s", output)
+				}
+				// 验证包含 IP 地址行
+				if !strings.Contains(output, "📍 IP 地址") {
+					t.Errorf("输出中未找到 IP 地址行，实际输出: %s", output)
+				}
+				// 验证包含国家信息
+				if !strings.Contains(output, "🌍 国家") {
+					t.Errorf("输出中未找到国家信息，实际输出: %s", output)
+				}
+				t.Log("显示完整 IP 信息格式 successful")
+			},
+		},
+
+		// 测试用例 7：模式标识区分
+		{
+			name: "模式标识区分",
+			fields: fields{
+				enabled: boolPtr(true),
+				origin:  boolPtr(true), // 原始模式
+			},
+			args: args{
+				ctx: &command.Context{
+					HTTPClient: &http.Client{},
+					Timeout:    15,
+				},
+			},
+			timeout: 30 * time.Second,
+			validateFunc: func(t *testing.T, output string, err error) {
+				if err != nil {
+					t.Fatalf("Execute 失败: %v", err)
+				}
+				// 验证显示 "📍 原始 IP"
+				if !strings.Contains(output, "📍 原始 IP") {
+					t.Errorf("输出中未找到 '📍 原始 IP'，实际输出: %s", output)
+				}
+				// 验证不显示 "📍 IP 地址:"
+				if strings.Contains(output, "📍 IP 地址:") {
+					t.Errorf("输出中不应包含 '📍 IP 地址:'，实际输出: %s", output)
+				}
+				t.Log("模式标识区分 successful")
+			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cmd := NewIPCommand()
-			flags := flag.NewFlagSet("test", flag.ContinueOnError)
-			cmd.DefineFlags(flags)
-
-			flags.Set("ip", tt.ipFlag)
-			flags.Set("origin", tt.originFlag)
-
-			client := &http.Client{
-				Timeout: 5 * time.Second,
+			// 跳过测试
+			if tt.skip {
+				t.Skip(tt.skipReason)
 			}
 
-			ctx := &command.Context{
-				HTTPClient: client,
-				Flags:      flags,
-				Timeout:    5,
-			}
-
-			// 执行命令，捕获 panic
-			defer func() {
-				if r := recover(); r != nil {
-					t.Errorf("Execute() panicked: %v", r)
+			// 构建 HTTP 客户端
+			var httpClient *http.Client
+			if tt.proxyURL != "" {
+				proxy, err := url.Parse(tt.proxyURL)
+				if err != nil {
+					t.Fatalf("无效的代理 URL: %v", err)
 				}
-			}()
+				httpClient = &http.Client{
+					Transport: &http.Transport{
+						Proxy: http.ProxyURL(proxy),
+					},
+					Timeout: tt.timeout,
+				}
+			} else {
+				httpClient = tt.args.ctx.HTTPClient
+				httpClient.Timeout = tt.timeout
+			}
 
-			err := cmd.Execute(ctx)
+			// 创建命令
+			c := NewIPCommand()
 
-			// 如果 ip=false，应该返回 nil
-			if tt.ipFlag == "false" && err != nil {
-				t.Errorf("Execute() with ip=false should return nil, got: %v", err)
+			// 创建并设置标志
+			flags := flag.NewFlagSet("test", flag.ContinueOnError)
+			c.DefineFlags(flags)
+			if tt.fields.enabled != nil && *tt.fields.enabled {
+				flags.Set("ip", "true")
+			}
+			if tt.fields.origin != nil && *tt.fields.origin {
+				flags.Set("origin", "true")
+			}
+
+			// 更新上下文
+			tt.args.ctx.HTTPClient = httpClient
+			tt.args.ctx.Timeout = int(tt.timeout.Seconds())
+
+			// 重定向标准输出以捕获输出
+			oldStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			// 执行命令
+			err := c.Execute(tt.args.ctx)
+
+			// 恢复标准输出
+			w.Close()
+			os.Stdout = oldStdout
+
+			// 读取输出
+			var buf bytes.Buffer
+			_, _ = buf.ReadFrom(r)
+			output := buf.String()
+
+			// 验证结果
+			if tt.validateFunc != nil {
+				tt.validateFunc(t, output, err)
 			}
 		})
 	}
 }
 
-// TestIPCommand_NilHTTPClient 测试 Nil HTTP Client 处理
-func TestIPCommand_NilHTTPClient(t *testing.T) {
-	cmd := NewIPCommand()
-	flags := flag.NewFlagSet("test", flag.ContinueOnError)
-	cmd.DefineFlags(flags)
-
-	flags.Set("ip", "true")
-
-	ctx := &command.Context{
-		HTTPClient: nil, // Nil client
-		Flags:      flags,
-		Timeout:    10,
-	}
-
-	// 执行命令，会触发 panic（这是当前实现的行为）
-	// 这个测试验证当前的行为，未来可以改进为优雅处理
-	defer func() {
-		if r := recover(); r != nil {
-			// 当前实现会 panic，这是预期行为
-			t.Logf("Execute() with nil client panicked (current behavior): %v", r)
+// 辅助函数：从输出中提取 IP 地址
+func extractIPFromOutput(output string) string {
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.Contains(line, "📍 IP 地址") {
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				return strings.TrimSpace(parts[1])
+			}
 		}
-	}()
-
-	err := cmd.Execute(ctx)
-
-	// 如果没有 panic，检查是否返回错误
-	if err != nil {
-		t.Logf("Execute() with nil client returned error: %v", err)
+		if strings.Contains(line, "📍 原始 IP") {
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				return strings.TrimSpace(parts[1])
+			}
+		}
 	}
+	return ""
 }

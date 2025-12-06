@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>Markmap</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+.markmap-dark {
+  background: #27272a;
+  color: white;
+}
+</style>
+
+</head>
+<body>
+<svg id="mindmap"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js"></script><script>((getMarkmap, getOptions, root2, jsonOptions) => {
+              const markmap = getMarkmap();
+              window.mm = markmap.Markmap.create(
+                "svg#mindmap",
+                (getOptions || markmap.deriveOptions)(jsonOptions),
+                root2
+              );
+              if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                document.documentElement.classList.add("markmap-dark");
+              }
+            })(() => window.markmap,null,{"content":"IPCommand.Execute &#x5355;&#x5143;&#x6d4b;&#x8bd5;&#x7528;&#x4f8b;&#xff08;&#x771f;&#x5b9e;&#x6267;&#x884c;&#x7248;&#xff09;","children":[{"content":"&#x6d4b;&#x8bd5;&#x6982;&#x8ff0;","children":[{"content":"&#x8868;&#x9a71;&#x52a8;&#x6d4b;&#x8bd5;&#x98ce;&#x683c;","children":[],"payload":{"tag":"li","lines":"3,4"}},{"content":"&#x771f;&#x5b9e;&#x6267;&#x884c;&#x800c;&#x975e; Mock","children":[],"payload":{"tag":"li","lines":"4,5"}},{"content":"&#x8986;&#x76d6;&#x5173;&#x952e;&#x573a;&#x666f;&#x548c;&#x8fb9;&#x754c;&#x6761;&#x4ef6;","children":[],"payload":{"tag":"li","lines":"5,7"}}],"payload":{"tag":"h2","lines":"2,3"}},{"content":"&#x7528;&#x6237;&#x8f93;&#x5165;&#x53c2;&#x6570;","children":[{"content":"PROXY_URL: &#x4ee3;&#x7406;&#x670d;&#x52a1;&#x5668;&#x5730;&#x5740;","children":[],"payload":{"tag":"li","lines":"8,9"}},{"content":"EXPECTED_IP_NO_PROXY: &#x4e0d;&#x4f7f;&#x7528;&#x4ee3;&#x7406;&#x65f6;&#x7684;&#x9884;&#x671f; IP","children":[],"payload":{"tag":"li","lines":"9,10"}},{"content":"EXPECTED_IP_WITH_PROXY: &#x4f7f;&#x7528;&#x4ee3;&#x7406;&#x65f6;&#x7684;&#x9884;&#x671f; IP","children":[],"payload":{"tag":"li","lines":"10,12"}}],"payload":{"tag":"h2","lines":"7,8"}},{"content":"&#x6d4b;&#x8bd5;&#x8303;&#x56f4;","children":[{"content":"&#x547d;&#x4ee4;&#x542f;&#x7528;/&#x7981;&#x7528;&#x903b;&#x8f91;","children":[],"payload":{"tag":"li","lines":"13,14"}},{"content":"&#x4ee3;&#x7406;&#x914d;&#x7f6e;&#x5904;&#x7406;&#xff08;origin &#x6a21;&#x5f0f;&#xff09;","children":[],"payload":{"tag":"li","lines":"14,15"}},{"content":"IP &#x68c0;&#x6d4b;&#x6210;&#x529f;/&#x5931;&#x8d25;&#x573a;&#x666f;","children":[],"payload":{"tag":"li","lines":"15,16"}},{"content":"&#x9519;&#x8bef;&#x5904;&#x7406;&#x548c;&#x4f20;&#x64ad;","children":[],"payload":{"tag":"li","lines":"16,17"}},{"content":"&#x8f93;&#x51fa;&#x683c;&#x5f0f;&#x5316;","children":[],"payload":{"tag":"li","lines":"17,18"}},{"content":"&#x771f;&#x5b9e;&#x7f51;&#x7edc;&#x73af;&#x5883;&#x4e0b;&#x7684;&#x6267;&#x884c;&#x9a8c;&#x8bc1;","children":[],"payload":{"tag":"li","lines":"18,20"}}],"payload":{"tag":"h2","lines":"12,13"}},{"content":"&#x8868;&#x9a71;&#x52a8;&#x6d4b;&#x8bd5;&#x7528;&#x4f8b;","children":[{"content":"&#x6838;&#x5fc3;&#x6d4b;&#x8bd5;&#x7528;&#x4f8b;","children":[{"content":"1. <strong>&#x547d;&#x4ee4;&#x672a;&#x542f;&#x7528;</strong> - TestExecute_CommandNotEnabled","children":[],"payload":{"tag":"li","lines":"23,24","listIndex":1}},{"content":"2. <strong>&#x4ee3;&#x7406;&#x6a21;&#x5f0f;&#x6210;&#x529f;</strong> - TestExecute_WithProxy_Success","children":[],"payload":{"tag":"li","lines":"24,25","listIndex":2}},{"content":"3. <strong>&#x539f;&#x59cb;&#x6a21;&#x5f0f;&#x6210;&#x529f;</strong> - TestExecute_OriginMode_Success","children":[],"payload":{"tag":"li","lines":"25,26","listIndex":3}},{"content":"4. <strong>&#x4ee3;&#x7406;&#x6a21;&#x5f0f;&#x5931;&#x8d25;</strong> - TestExecute_WithProxy_Failure","children":[],"payload":{"tag":"li","lines":"26,27","listIndex":4}},{"content":"5. <strong>&#x539f;&#x59cb;&#x6a21;&#x5f0f;&#x5931;&#x8d25;</strong> - TestExecute_OriginMode_Failure","children":[],"payload":{"tag":"li","lines":"27,29","listIndex":5}}],"payload":{"tag":"h3","lines":"22,23"}},{"content":"HTTP &#x5ba2;&#x6237;&#x7aef;&#x914d;&#x7f6e;","children":[{"content":"6. <strong>&#x539f;&#x59cb;&#x6a21;&#x5f0f;&#x914d;&#x7f6e;</strong> - TestExecute_OriginMode_HTTPClientConfiguration","children":[],"payload":{"tag":"li","lines":"30,31","listIndex":6}},{"content":"7. <strong>&#x4ee3;&#x7406;&#x6a21;&#x5f0f;&#x914d;&#x7f6e;</strong> - TestExecute_ProxyMode_HTTPClientUsage","children":[],"payload":{"tag":"li","lines":"31,32","listIndex":7}},{"content":"8. <strong>&#x8d85;&#x65f6;&#x65f6;&#x95f4;&#x4f20;&#x9012;</strong> - TestExecute_TimeoutPropagation","children":[],"payload":{"tag":"li","lines":"32,34","listIndex":8}}],"payload":{"tag":"h3","lines":"29,30"}},{"content":"&#x8f93;&#x51fa;&#x683c;&#x5f0f;&#x5316;","children":[{"content":"9. <strong>&#x5b8c;&#x6574;&#x4fe1;&#x606f;&#x663e;&#x793a;</strong> - TestExecute_DisplayFullIPInfo","children":[],"payload":{"tag":"li","lines":"35,36","listIndex":9}},{"content":"10. <strong>&#x90e8;&#x5206;&#x4fe1;&#x606f;&#x663e;&#x793a;</strong> - TestExecute_DisplayPartialIPInfo","children":[],"payload":{"tag":"li","lines":"36,37","listIndex":10}},{"content":"11. <strong>&#x6a21;&#x5f0f;&#x6807;&#x8bc6;&#x533a;&#x5206;</strong> - TestExecute_OriginModeIdentification","children":[],"payload":{"tag":"li","lines":"37,39","listIndex":11}}],"payload":{"tag":"h3","lines":"34,35"}},{"content":"&#x8fb9;&#x754c;&#x6761;&#x4ef6;&#x6d4b;&#x8bd5;","children":[{"content":"&#x7a7a; ctx.HTTPClient&#xff08;&#x4ee3;&#x7406;&#x6a21;&#x5f0f;&#xff09;","children":[],"payload":{"tag":"li","lines":"40,41"}},{"content":"ctx.Timeout &#x4e3a; 0","children":[],"payload":{"tag":"li","lines":"41,42"}},{"content":"IPInfo &#x6240;&#x6709;&#x5b57;&#x6bb5;&#x4e3a;&#x7a7a;","children":[],"payload":{"tag":"li","lines":"42,44"}}],"payload":{"tag":"h3","lines":"39,40"}}],"payload":{"tag":"h2","lines":"20,21"}},{"content":"&#x771f;&#x5b9e;&#x6267;&#x884c;&#x7279;&#x70b9;","children":[{"content":"&#x901a;&#x8fc7;&#x771f;&#x5b9e; HTTP &#x8bf7;&#x6c42;&#x8c03;&#x7528; IP &#x68c0;&#x6d4b; API","children":[],"payload":{"tag":"li","lines":"45,46"}},{"content":"&#x9a8c;&#x8bc1;&#x5b9e;&#x9645;&#x7f51;&#x7edc;&#x73af;&#x5883;&#x4e0b;&#x7684;&#x884c;&#x4e3a;","children":[],"payload":{"tag":"li","lines":"46,47"}},{"content":"&#x9a8c;&#x8bc1;&#x4ee3;&#x7406;&#x914d;&#x7f6e;&#x7684;&#x5b9e;&#x9645;&#x6548;&#x679c;","children":[],"payload":{"tag":"li","lines":"47,48"}},{"content":"&#x7aef;&#x5230;&#x7aef;&#x6d4b;&#x8bd5;","children":[],"payload":{"tag":"li","lines":"48,49"}},{"content":"&#x6545;&#x969c;&#x8f6c;&#x79fb;&#x9a8c;&#x8bc1;","children":[],"payload":{"tag":"li","lines":"49,51"}}],"payload":{"tag":"h2","lines":"44,45"}},{"content":"&#x4f7f;&#x7528;&#x524d;&#x51c6;&#x5907;","children":[{"content":"1. &#x8bbe;&#x7f6e;&#x73af;&#x5883;&#x53d8;&#x91cf;","children":[],"payload":{"tag":"li","lines":"52,53","listIndex":1}},{"content":"2. &#x786e;&#x4fdd;&#x7f51;&#x7edc;&#x8fde;&#x63a5;&#x7a33;&#x5b9a;","children":[],"payload":{"tag":"li","lines":"53,54","listIndex":2}},{"content":"3. &#x786e;&#x4fdd;&#x4ee3;&#x7406;&#x670d;&#x52a1;&#x5668;&#x53ef;&#x7528;","children":[],"payload":{"tag":"li","lines":"54,56","listIndex":3}}],"payload":{"tag":"h2","lines":"51,52"}},{"content":"&#x4ee3;&#x7801;&#x793a;&#x4f8b;","children":[{"content":"&#x6d4b;&#x8bd5;&#x7528;&#x4f8b;&#x5b9e;&#x73b0;","children":[],"payload":{"tag":"li","lines":"57,58"}},{"content":"&#x8f85;&#x52a9;&#x51fd;&#x6570;&#xff1a;&#x63d0;&#x53d6;&#x8f93;&#x51fa;&#x4e2d;&#x7684; IP &#x5730;&#x5740;","children":[],"payload":{"tag":"li","lines":"58,59"}},{"content":"&#x8f85;&#x52a9;&#x51fd;&#x6570;&#xff1a;&#x9a8c;&#x8bc1; IP &#x5730;&#x5740;&#x5339;&#x914d;","children":[],"payload":{"tag":"li","lines":"59,61"}}],"payload":{"tag":"h2","lines":"56,57"}},{"content":"&#x6027;&#x80fd;&#x8003;&#x8651;","children":[{"content":"&#x7f51;&#x7edc;&#x4f9d;&#x8d56;&#xff1a;&#x9700;&#x8981;&#x7f51;&#x7edc;&#x8fde;&#x63a5;","children":[],"payload":{"tag":"li","lines":"62,63"}},{"content":"&#x6d4b;&#x8bd5;&#x65f6;&#x95f4;&#xff1a;5-30 &#x79d2;","children":[],"payload":{"tag":"li","lines":"63,64"}},{"content":"&#x7f51;&#x7edc;&#x7a33;&#x5b9a;&#x6027;&#x8981;&#x6c42;","children":[],"payload":{"tag":"li","lines":"64,65"}},{"content":"&#x4ee3;&#x7406;&#x53ef;&#x7528;&#x6027;&#x8981;&#x6c42;","children":[],"payload":{"tag":"li","lines":"65,67"}}],"payload":{"tag":"h2","lines":"61,62"}},{"content":"&#x8986;&#x76d6;&#x7387;&#x76ee;&#x6807;","children":[{"content":"&#x8bed;&#x53e5;&#x8986;&#x76d6;&#x7387;: 100%","children":[],"payload":{"tag":"li","lines":"68,69"}},{"content":"&#x5206;&#x652f;&#x8986;&#x76d6;&#x7387;: 100%","children":[],"payload":{"tag":"li","lines":"69,70"}},{"content":"&#x51fd;&#x6570;&#x8986;&#x76d6;&#x7387;: 100%","children":[],"payload":{"tag":"li","lines":"70,71"}}],"payload":{"tag":"h2","lines":"67,68"}}],"payload":{"tag":"h1","lines":"0,1"}},null)</script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/index.js"></script>
+    <script>
+      ((r) => {
+          setTimeout(r);
+      })(() => {
+          const { markmap, mm } = window;
+          const toolbar = new markmap.Toolbar();
+          toolbar.attach(mm);
+          const el = toolbar.render();
+          el.setAttribute(
+              "style",
+              "position:absolute;bottom:20px;right:20px"
+          );
+          document.body.append(el);
+          
+          // Ensure the mind map fits the current view
+          setTimeout(() => {
+            if (mm && typeof mm.fit === 'function') {
+              mm.fit();
+            }
+          }, 1200);
+      });
+    </script>
+  
+
+    <!-- Add html-to-image library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+    <!-- Hidden element to store original Markdown content -->
+    <textarea id="original-markdown" style="display:none;"># IPCommand.Execute 单元测试用例（真实执行版）
+
+## 测试概述
+- 表驱动测试风格
+- 真实执行而非 Mock
+- 覆盖关键场景和边界条件
+
+## 用户输入参数
+- PROXY_URL: 代理服务器地址
+- EXPECTED_IP_NO_PROXY: 不使用代理时的预期 IP
+- EXPECTED_IP_WITH_PROXY: 使用代理时的预期 IP
+
+## 测试范围
+- 命令启用/禁用逻辑
+- 代理配置处理（origin 模式）
+- IP 检测成功/失败场景
+- 错误处理和传播
+- 输出格式化
+- 真实网络环境下的执行验证
+
+## 表驱动测试用例
+
+### 核心测试用例
+1. **命令未启用** - TestExecute_CommandNotEnabled
+2. **代理模式成功** - TestExecute_WithProxy_Success
+3. **原始模式成功** - TestExecute_OriginMode_Success
+4. **代理模式失败** - TestExecute_WithProxy_Failure
+5. **原始模式失败** - TestExecute_OriginMode_Failure
+
+### HTTP 客户端配置
+6. **原始模式配置** - TestExecute_OriginMode_HTTPClientConfiguration
+7. **代理模式配置** - TestExecute_ProxyMode_HTTPClientUsage
+8. **超时时间传递** - TestExecute_TimeoutPropagation
+
+### 输出格式化
+9. **完整信息显示** - TestExecute_DisplayFullIPInfo
+10. **部分信息显示** - TestExecute_DisplayPartialIPInfo
+11. **模式标识区分** - TestExecute_OriginModeIdentification
+
+### 边界条件测试
+- 空 ctx.HTTPClient（代理模式）
+- ctx.Timeout 为 0
+- IPInfo 所有字段为空
+
+## 真实执行特点
+- 通过真实 HTTP 请求调用 IP 检测 API
+- 验证实际网络环境下的行为
+- 验证代理配置的实际效果
+- 端到端测试
+- 故障转移验证
+
+## 使用前准备
+1. 设置环境变量
+2. 确保网络连接稳定
+3. 确保代理服务器可用
+
+## 代码示例
+- 测试用例实现
+- 辅助函数：提取输出中的 IP 地址
+- 辅助函数：验证 IP 地址匹配
+
+## 性能考虑
+- 网络依赖：需要网络连接
+- 测试时间：5-30 秒
+- 网络稳定性要求
+- 代理可用性要求
+
+## 覆盖率目标
+- 语句覆盖率: 100%
+- 分支覆盖率: 100%
+- 函数覆盖率: 100%</textarea>
+
+    <style>
+      /* Export toolbar styles */
+      .mm-export-toolbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        padding: 8px 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        gap: 10px;
+      }
+      .mm-export-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        background-color: #3498db;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
+      .mm-export-btn:hover {
+        background-color: #2980b9;
+      }
+      .mm-copy-btn {
+        background-color: #27ae60;
+      }
+      .mm-copy-btn:hover {
+        background-color: #219653;
+      }
+      @media print {
+        .mm-export-toolbar { display: none !important; }
+        .mm-toolbar { display: none !important; }
+        svg.markmap, svg#mindmap, #mindmap svg { 
+          display: block !important;
+          visibility: visible !important; 
+          opacity: 1 !important;
+          height: 100vh !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          max-height: 100vh !important;
+          overflow: visible !important;
+          page-break-inside: avoid !important;
+        }
+        body, html {
+          height: 100% !important;
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: visible !important;
+        }
+      }
+    </style>
+
+    <script>
+      (function() {
+        // Create bottom export toolbar
+        const exportToolbar = document.createElement('div');
+        exportToolbar.className = 'mm-export-toolbar';
+        document.body.appendChild(exportToolbar);
+        
+        // Export as PNG image
+        const pngBtn = document.createElement('button');
+        pngBtn.className = 'mm-export-btn png-export';
+        pngBtn.innerHTML = 'Export PNG';
+        pngBtn.title = 'Export as PNG image';
+        pngBtn.onclick = () => {
+          exportToImage('png');
+        };
+        exportToolbar.appendChild(pngBtn);
+
+        // Export as JPG image
+        const jpgBtn = document.createElement('button');
+        jpgBtn.className = 'mm-export-btn jpg-export';
+        jpgBtn.innerHTML = 'Export JPG';
+        jpgBtn.title = 'Export as JPG image';
+        jpgBtn.onclick = () => {
+          exportToImage('jpeg');
+        };
+        exportToolbar.appendChild(jpgBtn);
+        
+        // Export as SVG image
+        const svgBtn = document.createElement('button');
+        svgBtn.className = 'mm-export-btn svg-export';
+        svgBtn.innerHTML = 'Export SVG';
+        svgBtn.title = 'Export as SVG image';
+        svgBtn.onclick = () => {
+          exportToImage('svg');
+        };
+        exportToolbar.appendChild(svgBtn);
+
+        // Copy original Markdown button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'mm-export-btn mm-copy-btn copy-markdown';
+        copyBtn.innerHTML = 'Copy Markdown';
+        copyBtn.title = 'Copy original Markdown content';
+        copyBtn.onclick = copyOriginalMarkdown;
+        exportToolbar.appendChild(copyBtn);
+
+        // Function to copy original Markdown content
+        function copyOriginalMarkdown() {
+          try {
+            const markdownElement = document.getElementById('original-markdown');
+            if (!markdownElement) {
+              throw new Error('Original Markdown content not found');
+            }
+            
+            const markdownContent = markdownElement.value;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(markdownContent)
+              .then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✓ Copied';
+                copyBtn.style.backgroundColor = '#2ecc71';
+                
+                setTimeout(() => {
+                  copyBtn.innerHTML = originalText;
+                  copyBtn.style.backgroundColor = '';
+                }, 2000);
+              })
+              .catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy to clipboard, please check browser permissions');
+              });
+          } catch (e) {
+            console.error('Error copying Markdown:', e);
+            alert('Unable to copy Markdown: ' + e.message);
+          }
+        }
+
+        // Function to export image
+        function exportToImage(format) {
+          try {
+            const node = window.mm.svg._groups[0][0];
+            
+            if (!node) {
+              throw new Error('Cannot find mind map SVG element');
+            }
+
+            window.mm.fit().then(() => {
+              const options = {
+                backgroundColor: "#ffffff", 
+                quality: 1.0,
+                width: node.getBoundingClientRect().width,
+                height: node.getBoundingClientRect().height
+              };
+              
+              const exportPromise = format === 'svg' 
+                ? htmlToImage.toSvg(node, options)
+                : format === 'jpeg' 
+                  ? htmlToImage.toJpeg(node, options) 
+                  : htmlToImage.toPng(node, options);
+              
+              exportPromise
+                .then((dataUrl) => {
+                  const link = document.createElement('a');
+                  const timestamp = new Date().toISOString().slice(0, 10);
+                  link.download = `markmap-${timestamp}.${format === 'jpeg' ? 'jpg' : format === 'svg' ? 'svg' : 'png'}`;
+                  link.href = dataUrl;
+                  link.click();
+                })
+                .catch((err) => console.error("Export failed:", err));
+            })
+            .catch((err) => {
+                throw err;
+            });
+              
+          } catch (e) {
+            console.error('Error exporting image:', e);
+            alert('Image export failed: ' + e.message);
+          }
+        }
+      })();
+    </script>
+  
+</body>
+</html>
